@@ -15,6 +15,10 @@ bash scripts/run.sh
 ```
 
 ### **Windows**
+#### Make the `benchmarking_log` directory for logging the benchmarking results if doesn't exist:
+```batch
+mkdir benchmarking_log
+```
 #### Build the docker image:
 ```batch
 docker build -t devraymondsh/rust_web_frameworks_benchmark .

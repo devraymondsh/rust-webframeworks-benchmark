@@ -1,4 +1,7 @@
 #!/bin/bash
+
+mkdir -p benchmarking_log
+
 docker build -t devraymondsh/rust_web_frameworks_benchmark .
 
 echo ""
