@@ -6,8 +6,6 @@
 
 ### Rust (+1.57): [Rustup](https://rustup.rs/)
 
-<br/>
-
 ## **Executing the benchmark:**
 
 ### **Macos/Linux**
