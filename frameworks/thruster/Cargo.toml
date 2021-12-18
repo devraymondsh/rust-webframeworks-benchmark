@@ -1,0 +1,10 @@
+[package]
+name = "thruster"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+thruster = "1.1.10"
+
+[target.'cfg(all(target_env = "musl", target_pointer_width = "64"))'.dependencies.jemallocator]
+version = "0.3.2"
