@@ -7,8 +7,8 @@ docker build -t devraymondsh/rust_web_frameworks_benchmark .
 echo ""
 
 if [ -z "$CARGO_HOME" ]
-    CARGO_HOME = "$HOME/.cargo"
 then
+    CARGO_HOME = "$HOME/.cargo"
 fi
 
 DOCKER_RUN_PARAMS=(
