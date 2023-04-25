@@ -1,4 +1,4 @@
-FROM devraymondsh/ubuntu-docker-rust:latest AS build
+FROM devraymondsh/ubuntu-rust:latest AS build
 
 ENV DEBIAN_FRONTEND=noninteractive
 
