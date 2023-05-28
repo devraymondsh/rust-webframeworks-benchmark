@@ -7,16 +7,15 @@ RUN apt-get -y --no-install-recommends install jq openssl pkg-config libssl-dev
 
 WORKDIR /rust_web_frameworks_benchmark
 
-COPY static /rust_web_frameworks_benchmark/static
-COPY frameworks /rust_web_frameworks_benchmark/frameworks
 COPY scripts/frameworks.json /rust_web_frameworks_benchmark/scripts/frameworks.json
 COPY scripts/common.sh /rust_web_frameworks_benchmark/scripts/common.sh
 COPY scripts/compile.sh /rust_web_frameworks_benchmark/scripts/compile.sh
+COPY frameworks /rust_web_frameworks_benchmark/frameworks
 
 RUN chmod +x scripts/*.sh
 RUN [ "./scripts/compile.sh" ]
 
-FROM ubuntu:latest AS app
+FROM ubuntu:mantic AS app
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -36,6 +35,7 @@ COPY --from=build /rust_web_frameworks_benchmark/binaries binaries
 COPY scripts/frameworks.json /rust_web_frameworks_benchmark/scripts/frameworks.json
 COPY scripts/common.sh /rust_web_frameworks_benchmark/scripts/common.sh
 COPY scripts/benchmark.sh /rust_web_frameworks_benchmark/scripts/benchmark.sh
+COPY static /rust_web_frameworks_benchmark/static
 
 RUN chmod +x scripts/*.sh
 

@@ -4,6 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-mime_guess = "2.0.4"
-actix-web = "4.3.0"
-include_dir = "0.7.3"
+actix-web = { version = "4.3.1", default-features = false, features = ["macros"] }
+file-fetch = { path = "../file-fetch" }
+
+[profile.release]
+codegen-units = 1
+incremental = false
+lto = "fat"
+opt-level = 3

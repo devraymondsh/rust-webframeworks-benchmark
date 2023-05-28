@@ -4,8 +4,13 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-include_dir = "0.7.3"
-mime = "0.3.16"
-mime_guess = "2.0.4"
-salvo = { version = "0.37.9", features = ["full"] }
-tokio = { version = "1.25.0", features = ["rt-multi-thread", "macros"] }
+mime = { version = "0.3.17", default-features = false, features = [] }
+salvo = { version = "0.41.1", default-features = false, features = ["http1"] }
+tokio = { version = "1.28.1", default-features = false, features = ["rt-multi-thread", "macros"] }
+file-fetch = { path = "../file-fetch" }
+
+[profile.release]
+codegen-units = 1
+incremental = false
+lto = "fat"
+opt-level = 3

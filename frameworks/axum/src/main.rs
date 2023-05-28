@@ -1,14 +1,15 @@
 use axum::{
-    http::{StatusCode, header::{HeaderName, HeaderValue}},
-    Router,
-    routing::get,
     extract::Path as AxumPath,
-    response::{IntoResponse, IntoResponseParts, ResponseParts, Response}
+    http::{
+        header::{HeaderName, HeaderValue},
+        StatusCode,
+    },
+    response::{IntoResponse, IntoResponseParts, Response, ResponseParts},
+    routing::get,
+    Router,
 };
-use std::{path::Path, ffi::OsStr, net::SocketAddr};
-
-use include_dir::{include_dir, Dir};
-static PROJECT_DIR: Dir = include_dir!("../../static");
+use file_fetch::fetch_file;
+use std::net::SocketAddr;
 
 // Hypothetical helper type for setting a single header
 struct SetHeader(String, String);
@@ -19,19 +20,19 @@ impl IntoResponseParts for SetHeader {
         match (self.0.parse::<HeaderName>(), self.1.parse::<HeaderValue>()) {
             (Ok(name), Ok(value)) => {
                 res.headers_mut().insert(name, value);
-            },
+            }
             (Err(_), _) => {
                 return Err((
                     StatusCode::INTERNAL_SERVER_ERROR,
                     format!("Invalid header name {}", self.0),
                 ));
-            },
+            }
             (_, Err(_)) => {
                 return Err((
                     StatusCode::INTERNAL_SERVER_ERROR,
                     format!("Invalid header value {}", self.1),
                 ));
-            },
+            }
         }
 
         Ok(res)
@@ -58,30 +59,16 @@ async fn main() {
 }
 
 async fn handler(AxumPath(path): AxumPath<String>) -> (StatusCode, SetHeader, String) {
-    match PROJECT_DIR.get_file(&path) {
-        Some(contents) => {
-            let content_type = match Path::new(&path).extension().and_then(OsStr::to_str) {
-                Some(ext) => mime_guess::from_ext(ext).first_or_text_plain().to_string(),
-                None => String::from("text/plain"),
-            };
-
-            match contents.contents_utf8() {
-                Some(contents) => (
-                    StatusCode::OK,
-                    SetHeader(String::from("Content-Type"), String::from(content_type)),
-                    String::from(contents),
-                ),
-                None => (
-                    StatusCode::NOT_FOUND,
-                    SetHeader(String::from("Content-Type"), String::from("text/html")),
-                    String::from("Failed to get the contents as UTF-8!"),
-                ),
-            }
-        },
+    match fetch_file(path).await {
+        Some((contents, mime)) => (
+            StatusCode::OK,
+            SetHeader(String::from("Content-Type"), mime.to_string()),
+            contents,
+        ),
         None => (
             StatusCode::NOT_FOUND,
-            SetHeader(String::from("Content-Type"), String::from("text/html")),
+            SetHeader(String::from("Content-Type"), String::from("text/plain")),
             String::from("File not found!"),
-        )
+        ),
     }
 }

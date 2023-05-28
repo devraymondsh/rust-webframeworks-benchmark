@@ -1,45 +1,29 @@
-use rocket::{config, Config, http::{Status, ContentType}};
-use std::{path::Path, ffi::OsStr, net::Ipv4Addr};
+use file_fetch::fetch_file;
+use rocket::{
+    config,
+    http::{ContentType, Status},
+    Config,
+};
+use std::{net::Ipv4Addr, str::FromStr};
 
 #[macro_use]
 extern crate rocket;
 
-use include_dir::{include_dir, Dir};
-static PROJECT_DIR: Dir = include_dir!("../../static");
-
 #[get("/<filename>")]
 async fn index(filename: String) -> (Status, (ContentType, String)) {
-    
-    let mut status = Status::Ok;
-    let mut mime = ContentType::HTML;
-    let body = match PROJECT_DIR.get_file(&filename) {
-        Some(contents) => {
-            let content_type = match Path::new(&filename).extension().and_then(OsStr::to_str) {
-                Some(ext) => ext,
-                None => "text/plain",
-            };
-
-            match contents.contents_utf8() {
-                Some(contents) => {
-                    mime = ContentType::from_extension(content_type).unwrap_or(ContentType::Text);
-
-                    String::from(contents)
-                },
-                None => {
-                    status = Status::NotFound;
-
-                    String::from("Failed to get the contents as UTF-8!")
-                },
-            }
-        },
-        None => {
-            status = Status::NotFound;
-
-            String::from("File not found!")
-        }
-    };
-
-    (status, (mime, body))
+    match fetch_file(filename).await {
+        Some((contents, mime)) => (
+            Status::Ok,
+            (
+                ContentType::from_str(mime.to_string().as_str()).unwrap_or(ContentType::Text),
+                contents,
+            ),
+        ),
+        None => (
+            Status::NotFound,
+            (ContentType::Text, String::from("File not found!")),
+        ),
+    }
 }
 
 #[launch]

@@ -54,9 +54,7 @@ bunchmark() {
 }
 
 benchmark_all() {
-    DATE=$(date)
-
-    echo "Benchmarking started at $DATE..."
+    echo "Benchmarking started ..."
 
     # print a break line
     echo ""
@@ -64,8 +62,4 @@ benchmark_all() {
     loop_through_frameworks bunchmark
 }
 
-if [ -d "logs" ]; then
-    benchmark_all | tee -a "logs/benchmark__$(date +"%y-%m-%d_%H-%M").log"
-else
-    benchmark_all
-fi
+benchmark_all

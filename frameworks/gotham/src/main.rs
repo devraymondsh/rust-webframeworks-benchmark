@@ -1,3 +1,4 @@
+use file_fetch::fetch_file;
 use futures_util::future::FutureExt;
 use gotham::{
     handler::HandlerFuture,
@@ -8,10 +9,7 @@ use gotham::{
     state::{State, StateData},
 };
 use serde::Deserialize;
-use std::{path::Path, ffi::OsStr, pin::Pin};
-
-use include_dir::{include_dir, Dir};
-static PROJECT_DIR: Dir = include_dir!("../../static");
+use std::pin::Pin;
 
 #[derive(Deserialize, StateData, StaticResponseExtender)]
 struct IndexPathParams {
@@ -20,42 +18,20 @@ struct IndexPathParams {
 
 fn index(mut state: State) -> Pin<Box<HandlerFuture>> {
     let IndexPathParams { filename } = IndexPathParams::take_from(&mut state);
-
     async move {
-        let mut mime = mime::TEXT_HTML;
-        let mut status = StatusCode::OK;
-        let body = match PROJECT_DIR.get_file(&filename) {
-            Some(contents) => {
-                let content_type = match Path::new(&filename).extension().and_then(OsStr::to_str) {
-                    Some(ext) => mime_guess::from_ext(ext).first_or_text_plain(),
-                    _ => mime::TEXT_PLAIN,
-                };
-    
-                match contents.contents_utf8() {
-                    Some(contents) => {
-                        mime = content_type;
-
-                        String::from(contents)
-                    },
-                    None => {
-                        status = StatusCode::NOT_FOUND;
-
-                        String::from("Failed to get the contents as UTF-8!")
-                    },
-                }
-            },
-            None => {
-                status = StatusCode::NOT_FOUND;
-
-                String::from("File not found!")
-            }
+        let (body, mime, status) = match fetch_file(filename).await {
+            Some((contents, mime)) => (contents, mime, StatusCode::OK),
+            None => (
+                String::from("File not found!"),
+                mime::TEXT_PLAIN,
+                StatusCode::NOT_FOUND,
+            ),
         };
-
-        let response =
-            response::create_response(&state, status, mime, body);
+        let response = response::create_response(&state, status, mime, body);
 
         Ok((state, response))
-    }.boxed()
+    }
+    .boxed()
 }
 
 fn main() {
