@@ -1,7 +1,6 @@
 use file_fetch::fetch_file;
 use salvo::{
-    prelude::{handler, Router, Server, StatusCode, TcpListener},
-    writer::Text,
+    prelude::{handler, Router, Server, StatusCode, TcpListener, Text},
     Listener, Request, Response,
 };
 

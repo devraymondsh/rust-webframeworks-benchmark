@@ -9,7 +9,6 @@ use axum::{
     Router,
 };
 use file_fetch::fetch_file;
-use std::net::SocketAddr;
 
 // Hypothetical helper type for setting a single header
 struct SetHeader(String, String);
@@ -51,11 +50,11 @@ impl IntoResponse for SetHeader {
 async fn main() {
     let app = Router::new().route("/:filename", get(handler));
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 9852));
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:9852")
         .await
         .unwrap();
+
+    axum::serve(listener, app).await.unwrap();
 }
 
 async fn handler(AxumPath(path): AxumPath<String>) -> (StatusCode, SetHeader, String) {

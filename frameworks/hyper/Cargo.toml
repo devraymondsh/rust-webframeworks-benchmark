@@ -4,9 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-hyper = { version = "0.14.26", default-features = false, features = ["http1", "server", "runtime"] }
-serde_json = { version = "1.0.96", default-features = false, features = ["std"] }
-tokio = { version = "1.28.1", default-features = false, features = ["rt-multi-thread", "macros"] }
+http-body-util = { version = "0.1.0", default-features = false, features = [] }
+hyper = { version = "1.1.0", default-features = false, features = ["http1", "server"] }
+hyper-util = { version = "0.1.2", default-features = false, features = ["tokio"] }
+serde_json = { version = "1.0.108", default-features = false, features = ["std"] }
+tokio = { version = "1.35.1", default-features = false, features = ["rt-multi-thread", "net", "macros"] }
 file-fetch = { path = "../file-fetch" }
 
 [profile.release]

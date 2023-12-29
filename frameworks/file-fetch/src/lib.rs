@@ -6,7 +6,7 @@ compile_error!("Feature `tokio-uring` and `std` can't be used at the same time!"
 compile_error!("Feature `tokio` and `tokio-uring` can't be used at the same time!");
 
 use mime_guess::Mime;
-use once_cell::sync::Lazy;
+use once_cell::unsync::Lazy;
 use std::{
     env,
     path::{Path, PathBuf},

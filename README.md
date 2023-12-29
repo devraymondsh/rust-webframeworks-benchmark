@@ -3,14 +3,15 @@
 In this project we benchmark different Rust web frameworks to see which framework can handle more requests/second. We have a 512kb HTML file that each candidate should serve the directory in which the file is. The gap between these frameworks are not much and may change based on the hardware and after time with newer framework updates.
 
 ### Benchmarks on Intel core i5 12400:
-|  Name  | Version    | Requests/sec | Transfer/sec |
-|:------:|------------|:------------:|:------------:|
-| Axum   | 0.6.18     |    8497.79   |    4.15GB   |
-| Hyper  | 0.14.26    |    8310.59   |    4.06GB   |
-| Warp   | 0.3.5      |    8282.09   |    4.04GB   |
-| Actix  | 4.3.1      |    8157.53   |    3.98GB   |
-| Gotham | 0.7.1      |    7869.12   |    3.84GB   |
-| Rocket | 0.5.0-rc.3 |    6429.14   |    3.14GB   |
+| Name   |   Version   | Requests/sec | Transfer/sec |
+|:------:|------------:|:------------:|:------------|
+| Warp   |   0.3.6     |    8809.19   |    4.30GB   |
+| Hyper  |   1.1.0     |    8699.47   |    4.25GB   |
+| Axum   |   0.7.2     |    8663.31   |    4.23GB   |
+| Gotham |   0.7.2     |    8613.04   |    4.21GB   |
+| Actix  |   4.4.1     |    7617.35   |    3.72GB   |
+| Rocket |   0.5.0     |    6595.12   |    3.22GB   |
+| Salvo  |   0.63.1    |    6233.79   |    3.04GB   |
 
 ### Enter the following command to build:
 ```bash
